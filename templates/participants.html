@@ -1,0 +1,75 @@
+<!-- participants.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content_container %}
+
+	<div class="row">
+		<div class="col-md-12">
+			
+				<a href="{% url 'add_participant' %}" class="btn btn-md btn-success pull-right">+ Participant</a>
+				
+				<a href="#option1list" class="btn btn-md btn-success" data-toggle="collapse" aria-expanded="false">Option 1 <i class="fa fa-list"></i></a>
+				<div id="option1list" class="panel-collapse collapse well">{% for i in option1_list %}{{ i.email_addr }}, {% endfor %}</div>
+
+				<a href="#option2list" class="btn btn-md btn-success" data-toggle="collapse" aria-expanded="false">Option 2 <i class="fa fa-list"></i></a>
+				<div id="option2list" class="panel-collapse collapse well">{% for i in option2_list %}{{ i.email_addr }}, {% endfor %}</div>
+
+				<a href="#stafflist" class="btn btn-md btn-success" data-toggle="collapse" aria-expanded="false">Staff <i class="fa fa-list"></i></a>
+				<div id="stafflist" class="panel-collapse collapse well">{% for i in staff_list %}{{ i.email_addr }}, {% endfor %}</div>
+				<p></p>
+		</div>
+		<div class="col-md-12">
+			<div id="alpha_filters" class="pull-left">
+				<div class="btn btn-xs btn-default" data-floor="a" data-ceiling="h" >a-h</div>
+				<div class="btn btn-xs btn-default" data-floor="i" data-ceiling="p">i-p</div>
+				<div class="btn btn-xs btn-default" data-floor="q" data-ceiling="z">q-z</div>
+			</div>
+		
+			<div id="type_filters" class="pull-left">
+				<div class="btn btn-xs btn-default" data-filter=".opt1">Option 1
+					<span class="badge">{{ option1_list|length }}</span>
+				</div>
+				<div class="btn btn-xs btn-default" data-filter=".opt2">Option 2
+					<span class="badge">{{ option2_list|length }}</span>
+				</div>				
+				<div class="btn btn-xs btn-default" data-filter=".staff">Staff
+					<span class="badge">{{ staff_list|length }}</span>
+				</div>
+				<div class="btn btn-xs btn-default" data-filter=".active">Active
+					<span class="badge">{{ active_list|length }}</span>
+				</div>
+				<div class="btn btn-xs btn-default" data-filter=".participant">All</div>
+			
+			</div>
+			<p class="clearfix">
+			<div class="col-md-4">Registered email address</div>
+			<div class="col-md-2">Registration type</div>
+			<div class="col-md-2">Honor agreement</div>
+			<div class="col-md-2">Last login</div>
+			<div class="col-md-2">Edit record</div>
+			</p>
+		</div>
+	</div>
+	<div class="row" id="participant_container">
+	{% for i in object_list %} 
+		<div class="col-md-12 participant {{ i.participant_type }} {% if i.site_account.last_login %} active {% endif %}" style="padding: 5px">
+			<div class="col-md-4 email_addr">{{ i.email_addr }}</div>
+			<div class="col-md-2">{{ i.participant_type }}</div>
+			<div class="col-md-2">{% if i.honor_agreement %}<span class="badge" style="background: green"><i class="fa fa-check"></i></span>{% else %} {% endif %}</div>
+			<div class="col-md-2 last_login">{{ i.site_account.last_login }}</div>
+			<div class="col-md-2">
+				{% if user.is_staff %}
+				<a href="{% url 'edit_participant' i.id %}" class="btn btn-xs btn-default"><small>edit</small></a>
+				<a href="{% url 'delete_participant' i.id %}" class="btn btn-xs btn-danger"><small>remove</small></a>
+				{% endif %}
+			</div>			  
+		</div>
+
+	{% endfor %}
+	</div>
+
+{% endblock content_container %}
+
+{% block js_include %} <script src="{% static 'js/filtering.js' %}"></script>{% endblock js_include %}
+

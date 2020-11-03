@@ -1,0 +1,137 @@
+<!-- base.html -->
+{% load staticfiles %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,500' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700,300italic' rel='stylesheet' type='text/css'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block page_title %}NFLRC Fundamentals of PBLL Online{% endblock page_title %}</title>
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+   <!-- Bootstrap -->
+  <link {% static 'css/bootstrap.min.css' %} rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <!-- Site-wide css -->
+  <link href="{% static 'css/base.css' %}" rel="stylesheet">
+
+  <!-- Placeholder for page-level css includes -->
+  {% block css_include %} {% endblock css_include %}
+
+</head>
+
+<body>
+
+
+
+	<!-- Fixed navbar content -->
+    <div class="navbar navbar-default navbar-fixed-top header" role="navigation">
+      <div class="container-fluid ">
+        
+        <div class="navbar-header">
+
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            {% if user and not user.is_anonymous %}
+              <i class="fa fa-sign-out"></i>
+            {% else %}
+              <i class="fa fa-sign-in"></i>
+            {% endif %}
+          </button>
+
+          <a class="pull-left" href="{% url 'home' %}">
+            <img src="http://nflrc.hawaii.edu/media/img/1-PBLicon.png"> <span class="lead" style="font-size: 2.0em;">Fundamentals of PBLL</span>
+          </a>
+
+        </div>
+        
+        <div class="collapse navbar-collapse pull-right" style="background-color: white">
+          <ul class="nav navbar-nav navbar-right">
+            {% if user.is_staff %}<li><a href="{% url 'participants' %}"><i class="fa fa-users fa-1x"></i></a>{% endif %}</li>
+            {% if user and not user.is_anonymous %}
+              <li><a href="{% url 'auth:logout' %}"> sign out <smaller>{{ user.email }}</smaller></a> </li>
+            {% else %}
+              <li><a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}">Sign in</a>  </li>
+            {% endif %}
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+	<!-- End navbar content -->
+
+  <!-- Page content -->
+    <div class="container-fluid">
+      <h1>{% block page_header_container %}{% endblock page_header_container %}</h1>
+    </div>
+    
+    <div class="container-fluid">{% block content_container %} {% endblock content_container %}</div>
+  <!-- End page content -->
+
+    <div class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+      <div class="container-fluid footer">
+        <div class="pull-left"><a href="http://nflrc.hawaii.edu" target="_blank"><img height="70px" src="{% static 'img/nflrc-logo-square.png'%}"></a></div>
+        <div class="pull-right"><a href="https://clt.manoa.hawaii.edu" target="_blank"><img height="70px" src="{% static 'img/clt-logo-square.png'%}"></a></div>
+        <div class="text-muted">
+          Developed at the <a href="http://nflrc.hawaii.edu/contact/" target="_blank">National Foreign Language Resource Center</a>
+          <br>
+          with assistance from the <a href="https://clt.manoa.hawaii.edu" target="_blank">Center for Language & Technology</a>
+          <br>
+          University of Hawaiʻi at Mānoa
+        </div>
+
+      </div>
+    </div>
+  
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://code.jquery.com/jquery.js"></script>
+  
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+  <!-- Isotope visual filtering library -->
+  <script src="{% static 'js/isotope.pkgd.min.js' %}"></script>
+
+  <!-- TinyMCE -->
+  <script src="//tinymce.cachefly.net/4.1/tinymce.min.js"></script>
+  <script>
+    tinymce.init({
+      selector:'.content-editor',
+      menubar : false,
+      media_poster: true,
+      content_css: "{% static 'css/editor.css' %}",
+      plugins: "textcolor code media image visualblocks link",
+      toolbar: "undo redo | formatselect code visualblocks link unlink | alignleft aligncenter alignright alignjustify | bold italic underline strikethrough | forecolor backcolor | image media | removeformat" ,
+      image_advtab: true,
+    });
+    tinymce.init({
+      selector:'textarea.discussion-editor',
+      menubar : false,
+      media_poster: true,
+      content_css: "{% static 'css/editor.css' %}",
+      plugins: "textcolor code media image link",
+      toolbar: "undo redo | formatselect code link unlink | bold italic underline strikethrough | image media | removeformat" ,
+    });
+  </script>
+  
+
+  <script src="{% static 'js/lesson.js' %}"></script>
+
+  <!-- Placeholder for page level javascript includes -->
+  {% block js_include %} {% endblock js_include %}
+
+  <!-- Placeholder for page level javascript code -->
+  {% block js_script %} {% endblock js_script %}
+
+</body>
+</html>

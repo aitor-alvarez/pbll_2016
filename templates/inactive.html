@@ -1,0 +1,34 @@
+<!-- inactive.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block content_container %}
+
+<div class="row">
+    <div class="col-md-8 col-md-offset-2 text-center">
+    	{% if user.is_anonymous %}
+    	
+    		<p>Please <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}">sign in</a> before proceeding.</p>
+
+    	{% else %}
+            <h2>
+                {{ pbllpage.title }}
+                {% if user.is_staff %}
+                    <a href="{% url 'pbllpage_edit' slug=pbllpage.slug %}" class=""><small><i class="fa fa-pencil"></i></small></a>
+                {% endif %}
+            </h2>
+
+    		{{ pbllpage.content | safe }}
+    	
+    	{% endif %}
+
+	<form action="" method="post">{% csrf_token %}
+	    {{ form|crispy }}
+	    <input type="submit" value="Submit" />
+	</form>
+
+    </div>
+</div>
+    
+{% endblock content_container %}

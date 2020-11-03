@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load quiz_tags %}
+
+{% block title %} {{ quiz.title }} {% endblock %}
+{% block description %} {{ quiz.title }} - {{ quiz.description }} {% endblock %}
+
+{% block content_container %}
+<p class="lead">{% trans "This quiz does not contain any questions." %} <a href="{% url 'question_create' quiz.id %}" class="btn btn-default btn-xs">add question</a></p>
+<p> Back to <a href="{{ lesson.get_absolute_url }}">{{ lesson }}</a></p>
+
+
+{% endblock %}

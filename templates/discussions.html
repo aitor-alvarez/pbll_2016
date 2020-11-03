@@ -1,0 +1,150 @@
+<!-- discussions.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+
+{% block content_container %}
+
+<div class="row">
+	<div class="col-md-12">
+		{% if lesson %}
+			<h2>
+    			<a href="{{ lesson.module.get_absolute_url }}">{{ lesson.module }}</a> <i class="fa fa-caret-right"></i>
+    			{{ lesson }} {% if user.is_staff %}<a href="{% url 'lesson_edit' lesson.id %}" class="btn btn-default btn-xs">edit</a>{% endif %}
+			</h2>
+		{% endif %}
+	</div>
+
+    <div class="col-md-9">
+		<h1>Discussions</h1>    					
+	<!-- thread header -->			    
+		<h3>{{ thread.subject }}
+			<small>by {{ thread.creator.first_name }} {{ thread.creator.last_name }}</small>
+			<small style="float: right">{{ thread.modified|date:"M j Y" }}</small>
+			{% if user.is_staff or user == thread.creator %}<a href="{% url 'edit_post' thread.id %}" class="btn btn-default btn-xs"><i class="fa fa-pencil"></i></a>{% endif %}
+		</h3>
+
+		    
+	    <p style="margin: 15px 15px 15px 15px">{{ thread.text  | safe }}</p>
+
+	<!-- thread post form -->
+	    <div class="">
+	        <form id="{{thread.id}}-postform" class="postform" action="{% url 'create_post'%}" method="post" data-reply_target="{{thread.id}}-replies">{% csrf_token %}
+	            {{ postform|crispy }}
+	            <p></p>
+	            <input id="post_submit_btn" type="submit" class="btn btn-success btn-sm btn-block" value="Post your comment to {{thread.subject}}"/>          
+	        </form>
+	    </div>
+	     
+	<!-- thread replies -->
+	    <dl id="{{thread.id}}-replies" class="reply-block">		
+	    
+	      
+	    {% for j in replies  %}
+    	<p style="margin-top: 5px; border-top: 5px solid #ddd;">&nbsp;</p>
+	    <div id="post_{{j.0.id}}" class="" style="{% if j.0 in new_replies %} background-color: #FFCC99 {% endif %}">
+	    	<dt>
+	    		<h5>{{ j.0.subject }}</h5>
+	    		<h6 class="text-muted"<smaller>
+
+		    		{% if user.is_staff or user == j.0.creator %}
+			    			<form class="post_delete" method="post" data-reply-target="post_{{j.0.id}}" action="{% url 'delete_post' %}">{% csrf_token %}
+			    				<input type="hidden" name="post" value="{{ j.0.id }}"/>
+			    				<small><input type="submit" class="btn btn-xs pull-right" title="Delete this post?" value="remove"/></small>
+			    			</form>
+		    		{% endif %}
+		    		{{ j.0.modified|date:"M j Y" }}
+	    			by {% if user == j.0.creator %}me{% else %}{{ j.0.creator.first_name }} {{ j.0.creator.last_name }} {% endif %}
+	    			{% if user.is_staff or user == j.0.creator %} <a href="{% url 'edit_post' j.0.id %}" class=" btn btn-xs"><i class="fa fa-pencil"></i></a> {% endif %}
+	    		</h6>
+
+
+	    	</dt>
+	    	<dd style="margin: 10px 0px 10px 30px;">{{ j.0.text | safe }}</dd>
+    		<p></p>
+
+<!-- subthread replies -->    		
+    		<div>	    			
+
+<!-- display subreply form if current reply is not grandchild of thread -->
+    			{% if not j.0.parent.parent %}
+					<form id="{{j.0.id}}-postform" class="postform" style="margin-left: 30px;" action="{% url 'create_post'%}" method="post" data-reply_target="{{j.0.id}}-replies">{% csrf_token %}
+						<h6><input id="post_{{j.0.id}}_reply_btn" type="submit" class="btn btn-xs" value="reply"/> to {{ j.0.creator.first_name }} {{ j.0.creator.last_name }} </h6>
+						{{ j.1|crispy }}
+        			</form>	    				
+    			{% endif %}
+<!-- subthread replies -->
+
+    			<dl id="{{j.0.id}}-replies" class="reply-block" style="margin-left: 30px">
+    			<h5 class="text-muted">Replies to {{ j.0.subject }} by {{ j.0.creator.first_name }} </h5>
+    			{% for k in j.2  %}
+    				
+    				<div id="post_{{k.id}}" >
+				    	<dt>
+				    		<h6 class="text-muted"  style="border-bottom: 1px dotted #ddd;">
+					    		{% if user.is_staff or user == k.creator %}
+						    			<form class="post_delete" method="post" data-reply-target="post_{{k.id}}" action="{% url 'delete_post' %}">{% csrf_token %}
+						    				<input type="hidden" name="post" value="{{ k.id }}"/>
+						    				<small><input type="submit" class="btn btn-xs pull-right" title="Delete this post?" value="remove"/></small>
+						    			</form>
+		    					{% endif %}
+		    					{{ k.modified|date:"M j Y" }}
+		    					by {% if user == k.creator %}me{% else %}{{ k.creator.first_name }} {{ k.creator.last_name }} {% endif %}
+	    						{% if user.is_staff or user == k.creator %} <a href="{% url 'edit_post' k.id %}" class="pull btn btn-xs"><i class="fa fa-pencil"></i></a> {% endif %}
+		    				</h6>
+				    	</dt>
+				    	<dd style="margin-bottom: 30px;">{{ k.text | safe }}</dd>
+			    	</div>
+
+		    	{% endfor %}
+    			</dl>
+
+	    	</div><!-- End posts to subthread -->
+	    </div> <!-- End posts to thread -->
+	    {% endfor %}
+		</dl>
+
+	</div>	
+
+    <div class="col-md-3">
+    	{% if lesson %}       
+		    <div><a href="{% url 'lesson_section' pk=lesson.id section='topic' %}" class="menu_btn {% if curr_section == 'topic' %}active{% endif %}">Topics</a></div>
+		    <div><a href="{% url 'lesson_section' pk=lesson.id section='media' %}" class="menu_btn {% if curr_section == 'media' %}active{% endif %}">Consider This</a></div>
+		    
+			{% if quiz %} 
+				<div><a href="{% url 'lesson_quiz' quiz.id %}" class="menu_btn ">Test Yourself</a></div>
+			{% endif %} 
+			
+			<div><a href="{% url 'lesson_section' pk=lesson.id section='reading' %}" class="menu_btn {% if curr_section == 'reading' %}active{% endif %}">More to Consider</a></div>
+			<div><a href="" class="menu_btn active">Get Involved</a></div>
+			
+			<div><a href="{% url 'lesson_section' pk=lesson.id section='apply' %}" class="menu_btn {% if curr_section == 'apply' %}active{% endif %}">Apply</a>	</div>
+			<div><a href="{% url 'discussion' %}" class="menu_btn"> All Threads </a></div>
+
+			<hr>
+			
+			<div>
+				<a class="menu_btn" data-toggle="collapse" href="#lesson-menu"  aria-expanded="false" aria-controls="lesson-menu">More Lessons <i class="fa fa-caret-right"></i></a>
+
+				<div id="lesson-menu" class="collapse">
+					{% for i in module_lessons %}
+						<div class="">
+						{% if i.id = lesson.id %}
+							<span class="btn btn-md btn-default">{{ i.title }}</span>
+						{% else %}
+							<a href="{{ i.get_absolute_url }}" class="btn btn-md"> {{ i.title }}</a>
+						{% endif %}
+						</div>					
+					{% endfor %}
+				</div>
+	    	</div>
+		{% endif %}
+    </div>
+</div>
+
+{% endblock content_container %}
+
+   
+{% block js_include %} <script src="{% static 'js/discussions.js' %}"></script>{% endblock js_include %}
+

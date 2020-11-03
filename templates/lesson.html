@@ -1,0 +1,92 @@
+<!-- lesson.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content_container %}
+
+<div class="row">
+    <div class="col-md-12">
+    	<h2>
+    		<a href="{{ lesson.module.get_absolute_url }}">{{ lesson.module }}</a> <i class="fa fa-caret-right"></i></a>
+    		<span>{{ lesson }}</span>
+    		{% if user.is_staff %}<a href="{{ lesson.module.get_absolute_url }}" class="btn btn-default btn-xs"><i class="fa fa-pencil"></i></a>{% endif %}
+    	</h2>
+	</div>
+    <div class="col-md-9">
+		<div class="row">
+		{% if not lesson.active and not user.is_staff %}
+			<div class="col-md-12">This lesson has not been activated yet.</div>
+		{% else %}
+			{% for item in section_items %}
+				<div class="col-md-12">
+			
+					<h2>{{ item.get_content_type_display }}
+						{% if user.is_staff %}<a href="{% url 'lesson_section_edit' pk=item.id %}" class="btn btn-default btn-xs"><i class="fa fa-pencil"></i></a>{% endif %}
+					</h2>
+					
+					<div>{{ item.text | safe }}</div>
+				</div>
+			{% endfor %}
+		{% endif %}
+		</div>
+    </div>
+    
+    <div class="col-md-3">       
+	    <div>
+	    <a href="{% url 'lesson_section' pk=lesson.id section='topic' %}" class="menu_btn {% if curr_section == 'topic' %}active{% endif %}">Topics</a>
+	    </div>
+	    <div><a href="{% url 'lesson_section' pk=lesson.id section='media' %}" class="menu_btn {% if curr_section == 'media' %}active{% endif %}">Consider This</a></div>
+	    
+		{% if quiz %} 
+			<div><a href="{% url 'lesson_quiz' quiz.id %}" class="menu_btn ">Test Yourself</a></div>
+			
+		{% endif %} 
+		
+		<div><a href="{% url 'lesson_section' pk=lesson.id section='reading' %}" class="menu_btn {% if curr_section == 'reading' %}active{% endif %}">More to Consider</a></div>
+
+		
+		{% if lesson_thread %}
+			<div><a href="{% url 'discussion_select' pk=lesson_thread %}" class="menu_btn ">Get Involved</a></div>
+			<div class=" reply_preview_list bg-success">
+				
+				<div style="text-align: left"><small>Latest posting</small></div>
+				{% for i in lesson_thread_replies %}
+				<a href="{% url 'discussion_select' pk=lesson_thread %}#post_{{i.id}}">
+					<div class="">
+						<i class="fa fa-quote-right fa-1x"></i>					
+						<div class="reply_preview"><small>{{ i.text|truncatewords:10 | safe }}</small></div>
+					</div>
+					
+				</a>
+				<small class="pull-right" alt="{{ i.creator.email }}">{{ i.creator.first_name }}</small>					
+				{% empty %}
+					<div class=""><small>No recent posts. Be the first!</small></div>
+				{% endfor %}
+			</div>
+		{% endif %}
+		
+		<div><a href="{% url 'lesson_section' pk=lesson.id section='apply' %}" class="menu_btn {% if curr_section == 'apply' %}active{% endif %}">Apply</a>	</div>
+
+		<hr>
+
+		<div>
+			<a class="menu_btn" data-toggle="collapse" href="#lesson-menu"  aria-expanded="false" aria-controls="lesson-menu">More Lessons <i class="fa fa-caret-right"></i></a>
+
+			<div id="lesson-menu" class="collapse">
+				{% for i in module_lessons %}
+					<div class="">
+					{% if i.id = lesson.id %}
+						<span class="btn btn-md btn-default">{{ i.title }}</span>
+					{% else %}
+						<a href="{{ i.get_absolute_url }}" class="btn btn-md"> {{ i.title }}</a>
+					{% endif %}
+					</div>					
+				{% endfor %}
+			</div>
+    	</div>  
+
+		
+    </div>
+</div>
+    
+{% endblock content_container %}

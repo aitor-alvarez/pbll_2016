@@ -1,0 +1,22 @@
+<!-- whitelist_confirm_delete.html -->
+
+<!-- participants.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block content_container %}
+<div class="row ">
+    <div class="col-md-4"></div>
+    <div class="col-md-4 center-block" style="text-align: center">
+        <h3>Removing a participant from the whitelist. </h3>
+        <form action="" method="post">{% csrf_token %}
+            <p class="lead">Are you sure you want to delete "{{ object }}"?</p>
+            <input type="submit" value="Confirm" />
+            <a href="{% url 'participants' %}"> Cancel </a>
+        </form>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+
+{% endblock content_container %}

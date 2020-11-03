@@ -1,0 +1,29 @@
+<!-- edit_form.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load fb_versions %}
+
+{% block content_container %}
+
+<div class="row">
+    <div class="col-md-12"><h3>Editing {{ object_type }}: <em>{{ object }}</em> </h3></div>
+    <div class="col-md-10 col-md-offset-1">
+    	{{ form.fields.content_type_selected }}
+		<form id="basicform" class="" action="" method="post">{% csrf_token %}
+			{{ form|crispy }}
+			<p><input id="update_btn" type="submit" class="btn btn-default" value="Update"/></p>
+		</form>
+    </div>
+</div>
+
+<div class="row">
+    {% for i in filelisting %}
+        <div class="col-md-12">
+                            
+        </div>
+    {% endfor %}
+    
+</div>
+    
+{% endblock content_container %}

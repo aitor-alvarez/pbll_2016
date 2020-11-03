@@ -1,0 +1,48 @@
+<!-- question_create_form.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block content_container %}
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>
+            <a href="{{ lesson.module.get_absolute_url }}">{{ lesson.module }}</a> <i class="fa fa-caret-right"></i></a>
+            <span> <a href="{{ lesson.get_absolute_url }}">{{ lesson }}</a> </span>
+            {% if user.is_staff %}<a href="{% url 'lesson_edit' lesson.slug %}" class="btn btn-default btn-xs">edit</a>{% endif %}
+        </h2>
+    </div>
+    <div class="col-md-12"><h3>Creating a new Question for {{ quiz.0 }}<small>
+        <a href="{% url 'question_list' quiz.0.id %}" class="btn btn-default btn-xs">view questions</a>
+        <a href="{% url 'lesson_quiz' quiz.0.id %}" class="btn btn-default btn-xs">go to quiz</a>
+    </small></h3></div>
+
+    <div class="col-md-12">
+		<form id="basicform" class="" action="" method="post">{% csrf_token %}
+			<legend>Create a Question</legend>
+			{% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
+            <p>{{ form|crispy }}</p> 
+            
+            <fieldset>
+                <legend>Choices</legend>
+                {{ answers_form.management_form }}
+                {{ answers_form.non_form_errors }}
+                
+                {% for f in answers_form %}
+                    {{ f.id }}
+                    <div>
+                        {{ f.errors }}
+                        <p></p>
+                        <p>{{ f.content }}</p>
+                        <p>{{ f.correct.help_text }} {{ f.correct }} </p>
+                        <hr>                      
+                    </div>
+                {% endfor %}
+            </fieldset>
+			<p><br><input id="update_btn" type="submit" class="btn btn-default" value="Add"/></p>
+		</form>
+    </div>
+</div>
+    
+{% endblock content_container %}

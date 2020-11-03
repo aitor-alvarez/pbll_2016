@@ -1,0 +1,19 @@
+<!-- login-forbidden.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content_container %}
+
+<div class="row">
+    <div class="col-md-12">
+    	{% for i in messages %}
+    		<h3>{{ i }}</h3>
+    	{% endfor %}
+    	
+    	<p class="page-lead">Sorry, the email account used to login is not registered with this site. If you feel you have reached this page in error, please contact <a href="mailto://nflrc@hawaii.edu">the National Foreign Language Resource Center (nflrc@hawaii.edu)</a>. Please provide the email address you attempted to use when you reached this page in error.</p>
+
+    	<h4>Click <a href="https://accounts.google.com/logout">https://accounts.google.com/logout</a> to reattempt a login with a different Google provided email account.</h4>
+	</div>
+</div>
+    
+{% endblock content_container %}

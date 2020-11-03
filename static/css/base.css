@@ -1,0 +1,75 @@
+/* base.css */
+body {
+  padding-top: 80px;
+  padding-bottom: 75px;
+  font-family: 'Roboto', 'Open Sans Condensed', sans-serif;
+}
+
+
+
+.header {
+	background-color: white;
+	height: 80px;
+	border: none;
+}
+
+.header img {
+	height: 60px;
+}
+
+.header span {
+	font-size: 1.5em;
+	color: black;
+}
+
+.footer {
+	background-color: white;
+    text-align: center;
+    color: #fff;
+}
+
+.row {
+	margin-top: 10px;
+}
+
+.blocks {
+	position: relative; 
+	width: 200px; 
+	float: left; 
+	margin: 10px
+}
+
+.blocks-wide {
+	position: relative; 
+	width: 40%; 
+	float: left; 
+	margin: 10px;
+	padding: 20px;	
+}
+
+.menu_btn {
+	width: 100%;
+	color: #B2B3B3;
+	text-align: left;
+	font-size: 2.0em;
+	background-color: white;
+}
+
+.active {
+	background-color: #fff;
+	color: #000;
+}
+
+.inactive_lesson {
+	color: #D0D0D0 ; 
+}
+
+.reply_preview_list {
+	color: #B2B3B3;
+	text-align: left;
+	margin: 0 5px 0 10px;
+}
+
+.reply_preview {
+	color: #000;
+}

@@ -1,0 +1,47 @@
+<!-- discussions_index.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block content_container %}
+
+<div class="row">
+
+    <div class="col-md-12">
+    	<h1>Discussions</h1>		      
+		{% for i in threads  %}
+		
+			<div class="thumbnail blocks-wide">
+			
+				
+				<!-- thread header -->
+				<a href="{{ i.lesson.module.get_absolute_url }}"> {{ i.lesson.module }} </a> <i class="fa fa-caret-right"></i> 
+		    	<a href="{{ i.lesson.get_absolute_url }}"> {{ i.lesson }} </a>
+		    	<small class="" style="font-size: 0.3; float: right"><i>{{ i.reply_count }} replies {% if i.unread_reply_count %} <span class="badge">{{ i.unread_reply_count }}</span> new{% endif %}</i></small>
+		    	
+		    	
+		    	<a href="{% url 'discussion_select' i.header.id %}">
+			    	<h2>{{ i.header.subject }}</h2>
+			    </a>
+		       
+		       	<small> by {{ i.header.creator.first_name }}</small>
+		    	<small class="pull-right"> {{ i.header.modified|date:"M j Y" }} </small>
+		    	{% if user.is_staff or user == thread.creator %}<small class="pull-right"> <a href="{% url 'edit_post' i.header.id %}">edit</a>&nbsp; </small>{% endif %}
+		    	
+			    
+			    <!-- thread header text -->
+			    <p>{{ i.header.text | truncatewords_html:70 | safe }}</p>
+			    
+			
+			</div>
+
+		{% endfor %}
+	</div>	
+
+</div>
+
+{% endblock content_container %}
+
+{% block js_include %}<script src="{% static 'js/discussions.js' %}"></script> {% endblock js_include %}
+
+

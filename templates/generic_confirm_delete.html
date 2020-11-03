@@ -1,0 +1,19 @@
+<!-- generic_confirm_delete.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block content_container %}
+<div class="row ">
+    <div class="col-md-4"></div>
+    <div class="col-md-4 center-block" style="text-align: center">
+        <h3>Removing {{ object }} ({{ object_type }}). </h3>
+        <form action="" method="post">{% csrf_token %}
+            <p class="lead">Are you sure you want to do this?</p>
+            <input type="submit" value="Delete it!" />
+            <a href="{{ object.get_absolute_url }}"> Cancel the Request </a>
+        </form>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+{% endblock content_container %}

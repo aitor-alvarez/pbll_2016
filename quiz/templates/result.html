@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load quiz_tags %}
+
+{% block content_container %}
+<div class="row">
+    <div class="col-md-12">
+      <h2>
+          <a href="{{ lesson.module.get_absolute_url }}">{{ lesson.module }}</a> <i class="fa fa-caret-right"></i>
+          {{ lesson }} {% if user.is_staff %}<a href="{% url 'lesson_edit' lesson.slug %}" class="btn btn-default btn-xs"><i class="fa fa-pencil"></i></a>{% endif %}
+      </h2>
+    </div>
+    {% if not lesson.active and not user.is_staff %}
+      <div class="col-md-12">This lesson has not been activated yet.</div>
+    {% else %}
+    <div class="col-md-9">
+      
+<!-- Content Panel Display    -->
+      <div id="content_display_quiz" class="row">
+    
+
+<!-- Quiz Panel -->
+        <div class="col-md-12 item item_quiz">
+          {% if previous.answers %}
+            <p class="muted"><small>{% trans "The previous question" %}:</small></p>
+            <p>{{ previous.previous_question }}</p>
+            <p>Your answer was
+            <strong>
+              {{ previous.previous_outcome|yesno:"correct,incorrect" }}
+            </strong>
+            </p>
+            {% include 'correct_answer.html' %}
+            <p><strong>{% trans "Explanation" %}:</strong></p>
+            <div class="well " style="background-color: #fcf8e3;">
+              <p>{{ previous.previous_question.explanation }}</p>
+            </div>
+            <hr>
+          {% endif %}
+
+          {% if max_score %}
+            <div>
+              <h2>{% trans "How did you do?" %}</h2>
+              <p><strong>{{ quiz.title }}</strong></p>
+
+              <p class="lead">
+                {% trans "You answered" %} {{ score }} {% trans "questions correctly out of" %} {{ max_score }}, {% trans "giving you" %} {{ percent }} {% trans "percent correct" %}
+              </p>
+
+              
+              {% if quiz.pass_mark %}
+                <p class="lead">{{ sitting.result_message }}</p>
+              {% endif %}
+
+              {% if score < max_score %}
+                <h4><a href="{% url 'lesson_quiz' quiz_id=quiz.id %}">Try again now?</a></h4>
+              {% endif %}
+              
+
+              {% if user.is_authenticated %}
+                {% comment %}
+                <p>{% trans "The result of this exam will be stored in your progress section so you can review and monitor your progression" %}.</p>
+                {% endcomment %}
+              {% endif %}
+            </div>
+          {% endif %}
+          <hr>
+          {% if possible %}
+            <p class="lead">
+            {% trans "Your session score is" %} {{ session }} {% trans "out of a possible" %} {{ possible }}
+            </p>
+            <hr>
+          {% endif %}
+
+          {% if questions %}
+            {% for question in questions %}
+              <p class="lead">{{ question.content }}</p>
+              {% correct_answer_for_all question %}
+
+              {% if question.user_answer %}
+                <p>{% trans "Your answer" %}: {{ question|answer_choice_to_string:question.user_answer }}</p>
+              {% endif %}
+
+              <p><strong>{% trans "Explanation" %}:</strong></p>
+              <div class="well " style="background-color: #fcf8e3;">
+                <p>{{ question.explanation }}</p>
+              </div>
+              <hr>
+            {% endfor %}
+          {% endif %}
+        </div><!-- End Quiz Panel -->
+
+      </div><!-- End Content Display   -->
+    
+    </div><!-- End Content Container Left   -->
+
+
+<!-- Lesson Menu Right -->
+  <div class="col-md-3">
+  
+    <div><a href="{% url 'lesson_section' pk=lesson.id section='topic' %}" class="menu_btn {% if curr_section == 'topic' %}active{% endif %}">Topics</a></div>
+    <div><a href="{% url 'lesson_section' pk=lesson.id section='media' %}" class="menu_btn {% if curr_section == 'media' %}active{% endif %}">Consider This</a></div>
+    <div href="#" class="menu_btn active ">Test Yourself</div>
+
+    <div><a href="{% url 'lesson_section' pk=lesson.id section='reading' %}" class="menu_btn {% if curr_section == 'reading' %}active{% endif %}">More to Consider</a></div>
+
+    
+    {% if lesson_thread %}
+      <div><a href="{% url 'discussion_select' pk=lesson_thread.id %}" class="menu_btn ">Get Involved</a></div>
+      <div class="well reply_preview_list">
+        
+        <div style="text-align: left"><small>Latest posting</small></div>
+        {% for i in lesson_thread_replies %}
+        <a href="{% url 'discussion_select' pk=lesson_thread.id %}#post_{{i.id}}">
+          <div class="well">
+            <i class="fa fa-quote-left"></i>              
+            <div class="reply_preview"><small>{{ i.text|truncatewords:10 | safe }}</small></div>
+          </div>
+          
+        </a>
+        <small class="pull-right" alt="{{ i.creator.email }}">{{ i.creator.first_name }}</small>          
+        {% empty %}
+          <div class="well"><small>No recent posts. Be the first!</small></div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    
+    <div><a href="{% url 'lesson_section' pk=lesson.id section='topic' %}" class="menu_btn {% if curr_section == 'topic' %}active{% endif %}">Apply</a></div>
+
+    <hr>
+    
+    <div>
+      <a class="menu_btn" data-toggle="collapse" href="#lesson-menu"  aria-expanded="false" aria-controls="lesson-menu">More Lessons <i class="fa fa-caret-right"></i></a>
+
+      <div id="lesson-menu" class="collapse">
+        {% for i in module_lessons %}
+          <div class="">
+          {% if i.id = lesson.id %}
+            <span class="btn btn-md btn-default">{{ i.title }}</span>
+          {% else %}
+            <a href="{{ i.get_absolute_url }}" class="btn btn-md"> {{ i.title }}</a>
+          {% endif %}
+          </div>          
+        {% endfor %}
+      </div>
+      </div>
+
+  </div>
+<!-- End Menu -->
+{% endif %}
+</div>
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
